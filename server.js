@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const Recipe = require('./models/Receipe');
+const Recipe = require('./models/Recipe');
 const User = require('./models/User');
 //Bring in GraphQl-Express
 //const {graphiqlExpress,graphqlExpress}=require('apollo-server-express');
@@ -9,7 +9,7 @@ const User = require('./models/User');
 const {typeDefs}= require('./schema');
 const {resolvers}=require('./resolvers');
 //const { SchemaDirectiveVisitor } = require("apollo-server-express");
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer} = require('apollo-server-express');
 
 /*
 class UniqueIdDirective extends SchemaDirectiveVisitor {
@@ -48,36 +48,26 @@ const schema= makeExecutableSchema({
 
 require('dotenv').config({path: 'variable.env'});
 //connect to database
-mongoose.connect(process.env.MONGO_URI,{ useUnifiedTopology: true }).then(()=>console.log('DB connected')).catch(err=>console.error(err));
+mongoose.connect(process.env.MONGO_URI,{ useUnifiedTopology: true ,},).then(()=>console.log('DB connected')).catch(err=>console.error(err));
 //Initialuze application
 const app = express();
 const PORT = 8000;
 //Create GraphQl application
 //app.use('/graphiql',graphiqlExpress({endpointURL:'/graphql'}))
-const server = new ApolloServer({
-  // These will be defined for both new or existing servers
-  typeDefs,
+const server = new ApolloServer({ 
+  typeDefs, 
   resolvers,
-  playground: {
-    endpoint: 'graphql'
-    /*
-    subscriptionEndpoint?: string
-    tabs: [
-      {
-        endpoint: 'graphql'
-        query: string
-        variables?: string
-        responses?: string[]
-        headers?: { [key: string]: string }
-      },
-    ],
-    */
-  },
-
-});
+  context:{
+    Recipe,
+    User,
+    playground:{
+      endpoint:'/graphql'
+    }
+  } });
 server.applyMiddleware({
   app, // app is from an existing express app
 });
+/*
 
 app.use('/graphql',graphqlExpress({
 	schema,
@@ -87,6 +77,7 @@ app.use('/graphql',graphqlExpress({
 	}
 })
 );
+*/
 app.listen(PORT,()=>{
 	console.log('server running at port 8000')
 })
