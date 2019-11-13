@@ -10,6 +10,8 @@ const {typeDefs}= require('./schema');
 const {resolvers}=require('./resolvers');
 //const { SchemaDirectiveVisitor } = require("apollo-server-express");
 const { ApolloServer} = require('apollo-server-express');
+const cors = require('cors');
+
 
 /*
 class UniqueIdDirective extends SchemaDirectiveVisitor {
@@ -36,24 +38,21 @@ class UniqueIdDirective extends SchemaDirectiveVisitor {
   };
 };
 */
-/*
-const schema= makeExecutableSchema({
-	typeDefs,
-	resolvers,
-	//schemaDirectives:{
-		//uniqueID: UniqueIdDirective
-	//}
-})
-*/
+
 
 require('dotenv').config({path: 'variable.env'});
 //connect to database
 mongoose.connect(process.env.MONGO_URI,{ useUnifiedTopology: true ,},).then(()=>console.log('DB connected')).catch(err=>console.error(err));
-//Initialuze application
+
+const corsOptions = {
+  origin:'http://localhost:3000',
+  credentials: true
+}
+
 const app = express();
+app.use(cors(corsOptions));
 const PORT = 8000;
-//Create GraphQl application
-//app.use('/graphiql',graphiqlExpress({endpointURL:'/graphql'}))
+
 const server = new ApolloServer({ 
   typeDefs, 
   resolvers,
@@ -67,17 +66,7 @@ const server = new ApolloServer({
 server.applyMiddleware({
   app, // app is from an existing express app
 });
-/*
 
-app.use('/graphql',graphqlExpress({
-	schema,
-	context:{
-		Recipe,
-		User
-	}
-})
-);
-*/
 app.listen(PORT,()=>{
 	console.log('server running at port 8000')
 })

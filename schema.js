@@ -22,11 +22,16 @@ type User{
 	favorites:[Recipe]
 
 }
+type Token{
+	token: String!
+}
  type Query {
     getAllRecipes:[Recipe]
   }
 
   type Mutation{
   	addRecipe(name: String!, category:String!, description: String!, instructions: String!,username: String): Recipe
+  	signinUser (username: String!, password: String!): Token
+  	signupUser(username: String!,email: String!,password: String!): Token
   }
 `;
